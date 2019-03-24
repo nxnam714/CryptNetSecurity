@@ -135,12 +135,13 @@
     <ClCompile Include="Addition.cpp" />
     <ClCompile Include="Asymmetric.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="MD5Checksum.cpp" />
     <ClCompile Include="Symmetric.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Addition.h" />
     <ClInclude Include="Asymmetric.h" />
-    <ClInclude Include="Main.h" />
+    <ClInclude Include="MD5Checksum.h" />
     <ClInclude Include="Symmetric.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

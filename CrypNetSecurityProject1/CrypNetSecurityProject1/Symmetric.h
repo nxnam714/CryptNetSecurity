@@ -1,3 +1,8 @@
-//TODO: Write symmetric functions to encrypt or decrypt the input file.
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <openssl/evp.h>
 
-void symmetric_function(char* inputfile, char*outputfile);
+char *stringFromFile(char filename[], const char type[]);
+unsigned char *DES_encrypt(EVP_CIPHER_CTX *en, unsigned char *plaintext, int *plain_len);
+char *DES_decrypt(EVP_CIPHER_CTX *de, unsigned char *ciphertext, int *cipher_len);

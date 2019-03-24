@@ -8,7 +8,7 @@
 #include "Addition.h"
 #include "Asymmetric.h"
 #include "Symmetric.h"
-#include "Main.h"
+#include "MD5Checksum.h"
 
 
 #define SYMMETRIC_ENCODE	10
@@ -18,6 +18,8 @@
 #define RSA_DECODE			22
 #define STREGAN_ENCODE		30
 #define STREGAN_DECODE		31
+#define MD5_CHECKSUM		40
+#define DATA_LENGTH			2048
 
 
 using namespace std;
@@ -81,7 +83,8 @@ int main(int argc, char *argv[])
 
 		encrypt = (char*)malloc(RSA_size(public_key));
 		int encrypt_length = public_encrypt(strlen(message) + 1, (unsigned char*)message, (unsigned char*)encrypt, public_key, RSA_PKCS1_OAEP_PADDING);
-		if (encrypt_length == -1) {
+		if (encrypt_length == -1) 
+		{
 			LOG("An error occurred in public_encrypt() method");
 		}
 		LOG("Data has been encrypted.");
@@ -114,7 +117,8 @@ int main(int argc, char *argv[])
 
 		decrypt = (char *)malloc(encrypt_length);
 		int decrypt_length = private_decrypt(encrypt_length, (unsigned char*)encrypt, (unsigned char*)decrypt, private_key, RSA_PKCS1_OAEP_PADDING);
-		if (decrypt_length == -1) {
+		if (decrypt_length == -1) 
+		{
 			LOG("An error occurred in private_decrypt() method");
 		}
 		LOG("Data has been decrypted.");
@@ -128,6 +132,141 @@ int main(int argc, char *argv[])
 		free(encrypt);
 		free(decrypt);
 		LOG("OpenSSL_RSA has been finished.");
+		break;
+	}
+	case MD5_CHECKSUM:
+	{
+		FILE  *fp = NULL;
+		char plainttext[DATA_LENGTH], decryptedtext[DATA_LENGTH];
+		unsigned char *md1, *md2;
+		int mdLen1, mdLen2 = 0;
+
+		memset(&plainttext, 0, DATA_LENGTH);
+		memset(&decryptedtext, 0, DATA_LENGTH);
+
+		fp = fopen(argv[2], "r");
+		fgets(plainttext, DATA_LENGTH, fp);
+		fclose(fp);
+
+		fp = fopen(argv[3], "r");
+		fgets(decryptedtext, DATA_LENGTH, fp);
+		fclose(fp);
+
+		md1 = getMd5Hash((unsigned char *)plainttext, DATA_LENGTH, &mdLen1);
+		md2 = getMd5Hash((unsigned char *)decryptedtext, DATA_LENGTH, &mdLen2);
+
+		cout << memcmp(plainttext, decryptedtext, DATA_LENGTH) << endl;
+
+		if ((mdLen1 == mdLen2) && !memcmp(md1, md2, mdLen1))
+		{
+			cout << "OK\n";
+		}
+		else
+		{
+			cout << "FALSE\n";
+		}
+		free(md2);
+		free(md1);
+		break;
+	}
+	case SYMMETRIC_ENCODE:
+	{
+		char *key = NULL;
+		char *plain = NULL;
+		unsigned char *ciphertext;
+
+		plain = (char*)stringFromFile(argv[2], "r");
+		key = (char*)stringFromFile(argv[3], "r");
+
+		/* Get the length of plaintext */
+		int input_len = strlen(plain) + 1;
+
+		/* Initialize the EVP key */
+		EVP_CIPHER_CTX en;
+
+		EVP_CIPHER_CTX_init(&en);
+
+		EVP_EncryptInit_ex(&en, EVP_des_ecb(), NULL, (unsigned char *)key, NULL);
+
+		/* Encrypt */
+		ciphertext = DES_encrypt(&en, (unsigned char *)plain, &input_len);
+
+		/* Write ciphertext to file */
+		FILE *inf = fopen(argv[4], "wb");
+
+		int fl = input_len;
+
+		int i = 0;
+
+		while (i < fl)
+
+			fputc(ciphertext[i++], inf);
+
+		fclose(inf);
+
+		/* Write cipher size to file */
+		inf = fopen("../output_files/ciphersize.txt", "w");
+
+		fprintf(inf, "%d", input_len);
+
+		fclose(inf);
+
+		/* Free the EVP key */
+		EVP_CIPHER_CTX_cleanup(&en);
+
+		/* Free variables */
+		free(key);
+		free(plain);
+		free(ciphertext);
+		break;
+	}
+	case SYMMETRIC_DECODE:
+	{
+		char *key = NULL;
+		char *plaintext;
+		unsigned char *cipher;
+
+		int cipher_len;
+
+		key = (char*)stringFromFile(argv[2], "r");
+
+		/* Get cipher text from file*/
+		cipher = (unsigned char *)stringFromFile(argv[3], "rb");
+
+		/* get ciphertext length and put in length */
+		FILE *outf;
+
+		outf = fopen("../output_files/ciphersize.txt", "r");
+
+		fscanf(outf, "%d", &cipher_len);
+
+		fclose(outf);
+
+		/* Initialize the EVP key */
+		EVP_CIPHER_CTX ctx;
+
+		EVP_CIPHER_CTX_init(&ctx);
+
+		/* Initialize key and iv */
+		EVP_DecryptInit_ex(&ctx, EVP_des_ecb(), NULL, (unsigned char *)key, NULL);
+
+		/* Decrypt the ciphertext into plaintext */
+		plaintext = DES_decrypt(&ctx, cipher, &cipher_len);
+
+		/* Write plaintext to file */
+		FILE *wf = fopen(argv[4], "w");
+
+		for (int x = 0; plaintext[x]; x++)
+			fputc(plaintext[x], wf);
+
+		fclose(wf);
+
+		/* Free the evp key */
+		EVP_CIPHER_CTX_cleanup(&ctx);
+
+		free(key);
+		free(plaintext);
+		free(cipher);
 		break;
 	}
 	default:

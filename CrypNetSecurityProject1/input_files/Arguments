@@ -15,3 +15,7 @@
 31 ../output_files/output_image.png ../output_files/plainttext.txt
 
 40 ../input_files/text.txt  ../output_files/decrypted_file.txt
+
+10 ../input_files/dennis_ritchie.png ../input_files/deskey.txt ../output_files/des_encrypted.bin
+
+11 ../input_files/deskey.txt ../output_files/des_encrypted.bin ../output_files/des_decrypted.png

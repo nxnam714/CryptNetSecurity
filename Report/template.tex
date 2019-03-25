@@ -161,91 +161,68 @@ Cấu trúc của ứng dụng được miêu tả trong hình \ref{fig:file_str
 \end{figure}
 Chương trình gồm 4 mô đun chính là:
 \begin{itemize}
-    \item Symmetric: Chứa các hàm mã hóa tập tin sử dụng giải thuật DES.
-    \item Asymmetric: Chứa các hàm mã hóa tập tin sử dụng giải thuật RSA.
+    \item Symmetric: Chứa các hàm mã hóa đối xứng tập tin sử dụng giải thuật DES.
+    \item Asymmetric: Chứa các hàm mã hóa bất đối xứng tập tin sử dụng giải thuật RSA.
     \item Addition: Chứa các hàm mã hóa tập tin sử dụng kỹ thuật giấu tin (Steganography).
     \item Main: Đọc các đối số và gọi các hàm phù hợp trong ba thư viện trên.
 \end{itemize}
-	\subsection{Mạng cảm biến}
-	...
-	
-	\subsection{Server}
-	Các tệp tin và các trang ở server được tổ chức như sau:
-	\begin{figure}[htp]
-	    \centering
-	    \includegraphics[scale=0.5]{serverStructure.png}
-	    \caption{Kiến trúc tệp tin tại server}
-	    \label{fig:my_label}
-	\end{figure}
-	Các trang tại server phục vụ cho các yêu cầu của đề tài:
-	    \subsubsection{Backend}
-	        \begin{itemize}
-	            \item json.php: trả về dữ liệu dưới dạng JSON. Dữ liệu này được các cảm biến gửi lên và chứa trong cơ sở dữ liệu.
-	           \item data.php: nơi các gateway sẽ gửi dữ liệu được tổng hợp từ các sensor. Dữ liệu này sau đó sẽ được đưa vào cơ sở dữ liệu.
-	           \item login.php: xử lí các đăng kí và đăng nhập từ người dùng.
-	        \end{itemize}
-	   \subsubsection{Frontend}
-	        \begin{itemize}
-	            \item main.html: trang chính của người dùng, cung cấp việc lựa chọn các gateway đang có dữ liệu và vẽ biểu đồ theo thời gian.
-	            \item about.html: các thông tin về nhóm phát triển và đề tài.
-	            \item register.html: trang chưa thông tin đăng kí bởi người dùng.
-	            \item login.html: trang đăng nhập để vào ứng dụng.
-	        \end{itemize}
+	\subsection{Symmetric}
+	Giải thuật mã hóa đối xứng nhóm sử dụng là DES với ECB mode. Trong tệp "Symmetric.h":\\
+	\begin{lstlisting}[language=C]
+char *stringFromFile(char filename[], const char type[]);
+	\end{lstlisting}
+	Trả về chuỗi giá trị trong tệp filename.\\
+	type: chế độ đọc tệp ("r", "rb", ....).\\
+	Lưu ý: Cần giải phóng vùng nhớ cho con trỏ trả về do có sử dụng malloc trong hàm này.\\
+
+	\begin{lstlisting}[language=C]
+unsigned char *DES_encrypt(EVP_CIPHER_CTX *en, unsigned char *plaintext, int *plain_len);
+	\end{lstlisting}
+	Mã hó plaintext với độ dài plain\_len theo giải thuật được quy định trong (*en).
+	Trả về giá trị của chuỗi mã hóa.
+	Lưu ý: Cần giải phóng vùng nhớ cho con trỏ trả về do có sử dụng malloc trong hàm này.\\
+
+	\begin{lstlisting}[language=C]
+char *DES_decrypt(EVP_CIPHER_CTX *de, unsigned char *ciphertext, int *cipher_len);
+	\end{lstlisting}
+	Ngược với hàm trên, hàm này giải mã ciphertext với độ dài cipher\_len.\\
+	Giá trị của (*de) quy định giải thuật sử dụng để giải mã.\\
+	Giá trị trả về là plaintext.\\
+	Lưu ý: Cần giải phóng vùng nhớ cho con trỏ trả về do có sử dụng malloc trong hàm này.\\
+	\subsection{Asymmetric}
+	Giải thuật mã hóa bất đối xứng nhóm chọn là RSA.Trong tệp "Asymmetric.h":\\
+	\begin{lstlisting}[language=C]
+RSA * create_RSA(RSA *keypair, int pem_type, char *file_name);
+	\end{lstlisting}
+	Được sử dụng để tạo ra cặp key (private và public key) cho việc mã hóa và giải mã.\\
+	Key được lưu trong tệp file\_name.\\
+
+	\begin{lstlisting}[language=C]
+int public_encrypt(int flen, unsigned char* from, unsigned char *to, RSA* key, int padding);
+	\end{lstlisting}
+	Sử dụng public key để mã hóa chuỗi (*from) với độ dài flen và lưu chuỗi mã hóa vào (*to).
+	Trả về độ dài của chuỗi mã hóa.\\
+
+	\begin{lstlisting}[language=C]
+int private_decrypt(int flen, unsigned char* from, unsigned char *to, RSA* key, int padding);
+	\end{lstlisting}
+	Sử dụng private key để giải mã chuỗi (*from) với độ dài flen và lưu vào chuỗi (*to).\\
+	Trả về giá trị độ dài của plaintext.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{Ứng dụng di động}
-		\subsubsection{Android}
-		\begin{enumerate}
-		\item \textbf{ Sơ đồ trạng thái của ứng dụng.}\\
-			Với dứng dụng android, phần mềm được thực thi bằng các activity ứng với mỗi nhiệm vụ khác nhau. Trong bái tập lớn 			này, nhóm sử dụng các activity cơ bản sau:
- 			\begin{itemize} 
-				\item Đăng nhập (MainActivity hay LoginActivity), 
-				\item Danh sách dữ liệu thô (HomeActivity),
-				\item Biểu đồ đường (LineChartActivity),
-				\item Biểu đồ phân bố (DistributionChartActivity).
-			\end{itemize} 
-			Các activity giao tiếp với nhau thông qua intent của android theo sơ đồ hình \ref{fig:sateDiagramApp}:\\
-			\begin{figure}[htp]
-	    			\centering
-	   			 \includegraphics[scale=0.75]{StateDiagramApp.PNG}
-	   			 \caption{Sơ đồ chuyển trạng thái của các activity}
-	   			 \label{fig:sateDiagramApp}
-			\end{figure}\\
-			\textbf{LoginActivity} là hoạt động đầu tiên khi bắt dầu sử dụng ứng dụng.\\
-			\textbf{HomeActivity} quản lí một danh sách các dữ liệu thô lấy từ server. Danh sách này chỉ trỏ đến một nốt cụ thể 				(bao gồm một gatewayID và một nodeId) và chứa thông tin trong này ngày (tính từ 0 giờ). Vì dữ liệu có thể quá dài 				nên nhóm quyết định đặt gới hạn danh sách dài chỉ 20 phần tử.\\	
-			\textbf{LineChartActivity}: Giống HomeActivity, hoạt động này cũng lấy một mảng các gateway từ server. Tuy 					nhiên, dữ liệu lấy về được vẽ thành biểu đồ đường thể thấy trực quan sự biển đổi theo thời gian. Và gới hạn của các 				điễm vẽ biểu đồ cũng là 20 giống HomeActivity.\\
-			\textbf{DistributionChartActivity}: Các activity đều lấy dữ liệu từ server về. Với hoạt động này. Các dữ liệu lấy về sẽ 			được chia thành 10 nhóm tương ứng với 0-9,10-19,...90-100. Số lượng phần tử trong mỗi nhóm sẽ là căn cứ để tính 				ra phần trăm đóng góp của môi nhóm trong toàn một dữ iệu lấy về được. Từ đó là vẽ được biểu đồ phân bố giá trị.\\
-		\item \textbf{Cấu trúc dữ liệu của ứng dụng.}\\
-			Cấu trúc dữ liệu của ứng dụng được tổ chức theo cấu trúc của tệp json lấy từ server và được thể hiện thông qua 				sơ đồ hình \ref{fig:dataStructureApp}.
-			\begin{figure}[htp]
-	    			\centering
-	   			 \includegraphics[scale=0.5]{DataStructure.PNG}
-	   			 \caption{Cấu trúc dữ liệu của ứng dụng}
-	   			 \label{fig:dataStructureApp}
-			\end{figure}\\
-			 \textbf{Data} là lớp chứa dữ liệu mà một cảm biến gửi cho gateway tại một thời điểm. Vì vậy lớp này gồm 2 thuộc 				tính là thời gian (time) và độ ẩm (huminity).\\
-			 \textbf{Node} là đơn vị quản lí dữ liệu của một cảm biến. Nó gồm định danh của cảm biến và một mảng các giá trị mà 			cảm biến thu nhận được.\\
-			 \textbf{Gateway}: Một gateway quản lí nhiều cảm biến bởi vậy nó cần chứa một mảng các cảm biến (bao gồm định 
-			danh và dữ liệu của chúng). Đồng thời mỗi gateway cũng có định danh riêng của chúng.\\
-			 \textbf{ApiData} là dữ liệu nơi lưu trữ dữ liệu lấy được tệp json. Nó gôm một mảng các gateway.\\
-		\item \textbf{Lấy dữ liệu từ tệp json}.\\
-			Lấy dữ liệu từ server là một phần quan trọng của ứng dụng. Việc này được quản lí bới ApiController với cấu trúc hình 				 \ref{fig:ApiGetDataDiagramApp}:\\
-			\begin{figure}[htp]
-	    			\centering
-	   			 \includegraphics[scale=0.75]{ApiGetDataDiagram.PNG}
-	   			 \caption{Cấu trúc của ApiController}
-	   			 \label{fig:ApiGetDataDiagramApp}
-			\end{figure}\\
-			\textbf{ApiController} chứa các phần tử sau:
-			\begin{itemize} 
-				\item Đường dẫn đến địa chỉ chứa tệp json. Ví dụ: \\
-				\begin{lstlisting}[language=Java]
-public static final String BASE_URL = "http://10.20.83.74/backend/";
-				\end{lstlisting}
-				\item Sử dụng thư viện retrofit2 hiện thực phương thức getData() và trong constructure và trả dữ liệu về 						phương thức onRespone. 
-			\end{itemize} 
-			\textbf{ApiRoute} bao gồm địa chỉ của tệp json và phương thức getData().\\
-			\textbf{ApiListener} chứa phương thức onGetData sử lí dữ liệu lấy được từ json và được hiện thực trong các 					activity.
-		\end{enumerate}
+	\subsection{Addition}
+	Giải thuật mã hóa ngoài bài giảng nhóm sử dụng là kỹ thuật che giấu tập tin. Trong tệp "Addition.h":\\
+	\begin{lstlisting}[language=C]
+void steganography_encode(char* inputfile, Mat image, char*outputfile);
+	\end{lstlisting}
+	Đọc tệp inputfile dưới dạng bit.\\
+	Sử dụng phép tính "and" bit cho mỗi bit trong inputfile ứng với giá trị bit cuối trong mỗi kênh màu, pixels của ảnh image. Từ đó thu được một ảnh có sai khác rất nhỏ so với ảnh gốc.\\
+	Ghi ảnh kết quả vào tệp outputfile.\\
+
+	\begin{lstlisting}[language=C]
+void steganography_decode(Mat image, char*outputfile);
+	\end{lstlisting}
+	Từ ảnh image, rút ra thông điệp và lưu nó vào outputfile.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Các giao thức sử dụng}

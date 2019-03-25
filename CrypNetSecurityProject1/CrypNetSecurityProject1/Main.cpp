@@ -48,6 +48,7 @@ int main(int argc, char *argv[])
 	{
 		Mat cipherImage = imread(argv[2]);
 		steganography_decode(cipherImage, argv[3]);
+		break;
 	}
 	case RSA_CREATE:
 	{
@@ -175,8 +176,8 @@ int main(int argc, char *argv[])
 		char *plain = NULL;
 		unsigned char *ciphertext;
 
-		plain = (char*)stringFromFile(argv[2], "r");
-		key = (char*)stringFromFile(argv[3], "r");
+		plain = (char*)stringFromFile(argv[2], "rb");
+		key = (char*)stringFromFile(argv[3], "rb");
 
 		/* Get the length of plaintext */
 		int input_len = strlen(plain) + 1;
@@ -190,22 +191,23 @@ int main(int argc, char *argv[])
 
 		/* Encrypt */
 		ciphertext = DES_encrypt(&en, (unsigned char *)plain, &input_len);
-
+		
 		/* Write ciphertext to file */
-		FILE *inf = fopen(argv[4], "wb");
+		FILE *inf = fopen(argv[4], "w");
 
 		int fl = input_len;
 
 		int i = 0;
-
+		
 		while (i < fl)
 
 			fputc(ciphertext[i++], inf);
 
 		fclose(inf);
-
+		//system("pause");
+		//"../output_files/ciphersize.txt"
 		/* Write cipher size to file */
-		inf = fopen("../output_files/ciphersize.txt", "w");
+		inf = fopen(argv[5], "w");
 
 		fprintf(inf, "%d", input_len);
 
@@ -228,7 +230,7 @@ int main(int argc, char *argv[])
 
 		int cipher_len;
 
-		key = (char*)stringFromFile(argv[2], "r");
+		key = (char*)stringFromFile(argv[2], "rb");
 
 		/* Get cipher text from file*/
 		cipher = (unsigned char *)stringFromFile(argv[3], "rb");
@@ -236,7 +238,7 @@ int main(int argc, char *argv[])
 		/* get ciphertext length and put in length */
 		FILE *outf;
 
-		outf = fopen("../output_files/ciphersize.txt", "r");
+		outf = fopen(argv[5], "r");
 
 		fscanf(outf, "%d", &cipher_len);
 
@@ -254,7 +256,7 @@ int main(int argc, char *argv[])
 		plaintext = DES_decrypt(&ctx, cipher, &cipher_len);
 
 		/* Write plaintext to file */
-		FILE *wf = fopen(argv[4], "w");
+		FILE *wf = fopen(argv[4], "wb");
 
 		for (int x = 0; plaintext[x]; x++)
 			fputc(plaintext[x], wf);
@@ -272,7 +274,7 @@ int main(int argc, char *argv[])
 	default:
 		break;
 	}
-	cout << "Hello World\n";
+	//cout << "Hello World\n";
 	system("pause");
 	return 0;
 }

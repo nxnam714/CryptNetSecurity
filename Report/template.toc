@@ -1,0 +1,18 @@
+\contentsline {section}{\numberline {1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u \IeC {\dj }\IeC {\`\ecircumflex } t\IeC {\`a}i}{2}{section.1}
+\contentsline {section}{\numberline {2}C\IeC {\'\acircumflex }u tr\IeC {\'u}c c\IeC {\h u}a \IeC {\'\uhorn }ng d\IeC {\d u}ng}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}M\IeC {\d a}ng c\IeC {\h a}m bi\IeC {\'\ecircumflex }n}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Server}{3}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Backend}{3}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Frontend}{3}{subsubsection.2.2.2}
+\contentsline {subsection}{\numberline {2.3}\IeC {\'\UHORN }ng d\IeC {\d u}ng di \IeC {\dj }\IeC {\d \ocircumflex }ng}{4}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}Android}{4}{subsubsection.2.3.1}
+\contentsline {section}{\numberline {3}C\IeC {\'a}c giao th\IeC {\'\uhorn }c s\IeC {\h \uhorn } d\IeC {\d u}ng}{6}{section.3}
+\contentsline {subsection}{\numberline {3.1}Hypertext Transfer Protocol}{6}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Stop and Wait}{6}{subsection.3.2}
+\contentsline {section}{\numberline {4}C\IeC {\'a}c t\IeC {\'\i }nh n\IeC {\u a}ng c\IeC {\h u}a h\IeC {\d \ecircumflex } th\IeC {\'\ocircumflex }ng}{6}{section.4}
+\contentsline {section}{\numberline {5}H\IeC {\uhorn }\IeC {\'\ohorn }ng d\IeC {\~\acircumflex }n v\IeC {\d \acircumflex }n h\IeC {\`a}nh}{7}{section.5}
+\contentsline {subsection}{\numberline {5.1}C\IeC {\'a}ch c\IeC {\`a}i \IeC {\dj }\IeC {\d \abreve }t server}{7}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}S\IeC {\h \uhorn } d\IeC {\d u}ng c\IeC {\'a}c t\IeC {\'\i }nh n\IeC {\u a}ng c\IeC {\h u}a website}{9}{subsection.5.2}
+\contentsline {subsection}{\numberline {5.3}S\IeC {\h \uhorn } d\IeC {\d u}ng \IeC {\'\uhorn }ng di \IeC {\dj }\IeC {\d \ocircumflex }ng}{9}{subsection.5.3}
+\contentsline {subsubsection}{\numberline {5.3.1}Android}{9}{subsubsection.5.3.1}
+\contentsline {section}{\numberline {6}K\IeC {\'\ecircumflex }t lu\IeC {\d \acircumflex }n}{14}{section.6}

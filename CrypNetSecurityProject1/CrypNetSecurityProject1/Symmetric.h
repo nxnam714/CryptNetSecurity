@@ -3,6 +3,6 @@
 #include <string.h>
 #include <openssl/evp.h>
 
-char *stringFromFile(char filename[], const char type[]);
+int stringFromFile(char filename[], const char type[], char **buff);
 unsigned char *DES_encrypt(EVP_CIPHER_CTX *en, unsigned char *plaintext, int *plain_len);
 char *DES_decrypt(EVP_CIPHER_CTX *de, unsigned char *ciphertext, int *cipher_len);

@@ -1,8 +1,8 @@
 #include "Symmetric.h"
 
-char *stringFromFile(char filename[], const char type[])
+int stringFromFile(char filename[], const char type[], char **buff)
 {
-	unsigned char *str;
+	unsigned char *str = NULL;
 
 	/* Open file */
 	FILE *fp;
@@ -22,20 +22,14 @@ char *stringFromFile(char filename[], const char type[])
 	fseek(fp, 0, SEEK_SET);
 
 	// Allocate memory for the string
-	str = (unsigned char*)malloc(length + 1);
+	str = (unsigned char*)malloc(length);
 
-	int c, n = 0;
-
-	// Read in each char from file
-	while ((c = fgetc(fp)) != EOF)
-	{
-		str[n++] = (unsigned char)c;
-	}
-	str[n] = '\0';
+	fread(str, length, 1, fp);
 
 	fclose(fp);
 
-	return (char*)str;
+	(*buff) = (char *)str;
+	return length;
 }
 
 

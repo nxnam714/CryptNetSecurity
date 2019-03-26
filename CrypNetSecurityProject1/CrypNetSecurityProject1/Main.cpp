@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <time.h>
 
 #include <openssl/rsa.h>
 #include <openssl/pem.h>
@@ -27,6 +28,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+	clock_t start_t, end_t, total_t;
+
 	int tasks = 0;
 	if (argc > 1) {
 		sscanf(argv[1], "%d", &tasks);
@@ -36,6 +39,9 @@ int main(int argc, char *argv[])
 		system("pause");
 		return 0;
 	}
+
+	start_t = clock();
+
 	switch (tasks)
 	{
 	case STREGAN_ENCODE:
@@ -156,7 +162,7 @@ int main(int argc, char *argv[])
 		md1 = getMd5Hash((unsigned char *)plainttext, DATA_LENGTH, &mdLen1);
 		md2 = getMd5Hash((unsigned char *)decryptedtext, DATA_LENGTH, &mdLen2);
 
-		cout << memcmp(plainttext, decryptedtext, DATA_LENGTH) << endl;
+		//cout << memcmp(plainttext, decryptedtext, DATA_LENGTH) << endl;
 
 		if ((mdLen1 == mdLen2) && !memcmp(md1, md2, mdLen1))
 		{
@@ -176,11 +182,9 @@ int main(int argc, char *argv[])
 		char *plain = NULL;
 		unsigned char *ciphertext;
 
-		plain = (char*)stringFromFile(argv[2], "rb");
-		key = (char*)stringFromFile(argv[3], "rb");
+		int input_len = stringFromFile(argv[2], "rb", &plain);
+		stringFromFile(argv[3], "rb", &key);
 
-		/* Get the length of plaintext */
-		int input_len = strlen(plain) + 1;
 
 		/* Initialize the EVP key */
 		EVP_CIPHER_CTX en;
@@ -193,23 +197,9 @@ int main(int argc, char *argv[])
 		ciphertext = DES_encrypt(&en, (unsigned char *)plain, &input_len);
 		
 		/* Write ciphertext to file */
-		FILE *inf = fopen(argv[4], "w");
+		FILE *inf = fopen(argv[4], "wb");
 
-		int fl = input_len;
-
-		int i = 0;
-		
-		while (i < fl)
-
-			fputc(ciphertext[i++], inf);
-
-		fclose(inf);
-		//system("pause");
-		//"../output_files/ciphersize.txt"
-		/* Write cipher size to file */
-		inf = fopen(argv[5], "w");
-
-		fprintf(inf, "%d", input_len);
+		fwrite(ciphertext, sizeof(char), (input_len) * sizeof(char), inf);
 
 		fclose(inf);
 
@@ -226,23 +216,14 @@ int main(int argc, char *argv[])
 	{
 		char *key = NULL;
 		char *plaintext;
-		unsigned char *cipher;
+		unsigned char *cipher = NULL;
 
 		int cipher_len;
 
-		key = (char*)stringFromFile(argv[2], "rb");
+		stringFromFile(argv[2], "rb", &key);
 
 		/* Get cipher text from file*/
-		cipher = (unsigned char *)stringFromFile(argv[3], "rb");
-
-		/* get ciphertext length and put in length */
-		FILE *outf;
-
-		outf = fopen(argv[5], "r");
-
-		fscanf(outf, "%d", &cipher_len);
-
-		fclose(outf);
+		cipher_len = stringFromFile(argv[3], "rb", (char**)&cipher);
 
 		/* Initialize the EVP key */
 		EVP_CIPHER_CTX ctx;
@@ -257,10 +238,7 @@ int main(int argc, char *argv[])
 
 		/* Write plaintext to file */
 		FILE *wf = fopen(argv[4], "wb");
-
-		for (int x = 0; plaintext[x]; x++)
-			fputc(plaintext[x], wf);
-
+		fwrite(plaintext, sizeof(char), (cipher_len) * sizeof(char), wf);
 		fclose(wf);
 
 		/* Free the evp key */
@@ -274,7 +252,11 @@ int main(int argc, char *argv[])
 	default:
 		break;
 	}
-	//cout << "Hello World\n";
+
+	end_t = clock();
+	total_t = (end_t - start_t);
+	printf("Total time taken by CPU: %d\n", total_t);
+
 	system("pause");
 	return 0;
 }

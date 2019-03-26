@@ -1,17 +1,22 @@
 \contentsline {section}{\numberline {1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u \IeC {\dj }\IeC {\`\ecircumflex } t\IeC {\`a}i}{2}{section.1}
-\contentsline {section}{\numberline {2}C\IeC {\'\acircumflex }u tr\IeC {\'u}c c\IeC {\h u}a \IeC {\'\uhorn }ng d\IeC {\d u}ng}{2}{section.2}
-\contentsline {subsection}{\numberline {2.1}Symmetric}{3}{subsection.2.1}
-\contentsline {subsection}{\numberline {2.2}Asymmetric}{3}{subsection.2.2}
-\contentsline {subsection}{\numberline {2.3}Addition}{4}{subsection.2.3}
-\contentsline {subsection}{\numberline {2.4}MD5}{4}{subsection.2.4}
-\contentsline {subsection}{\numberline {2.5}Main}{4}{subsection.2.5}
-\contentsline {section}{\numberline {3}Ch\IeC {\d a}y th\IeC {\h \uhorn } ch\IeC {\uhorn }\IeC {\ohorn }ng tr\IeC {\`\i }nh}{5}{section.3}
-\contentsline {subsection}{\numberline {3.1}M\IeC {\~a} h\IeC {\'o}a DES}{5}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Gi\IeC {\h a}i m\IeC {\~a} DES}{5}{subsection.3.2}
-\contentsline {subsection}{\numberline {3.3}T\IeC {\d a}o kh\IeC {\'o}a RSA}{6}{subsection.3.3}
-\contentsline {subsection}{\numberline {3.4}M\IeC {\~a} h\IeC {\'o}a RSA}{8}{subsection.3.4}
-\contentsline {subsection}{\numberline {3.5}Gi\IeC {\h a}i m\IeC {\~a} RSA}{8}{subsection.3.5}
-\contentsline {subsection}{\numberline {3.6}K\IeC {\~y} thu\IeC {\d \acircumflex }t gi\IeC {\'\acircumflex }u tin}{9}{subsection.3.6}
-\contentsline {section}{\numberline {4}H\IeC {\uhorn }\IeC {\'\ohorn }ng d\IeC {\~\acircumflex }n v\IeC {\d \acircumflex }n h\IeC {\`a}nh tr\IeC {\^e}n MSVC}{11}{section.4}
-\contentsline {section}{\numberline {5}Ph\IeC {\^a}n t\IeC {\'\i }ch v\IeC {\`a} k\IeC {\'\ecircumflex }t lu\IeC {\d \acircumflex }n}{11}{section.5}
-\contentsline {section}{\numberline {6}Ph\IeC {\^a}n c\IeC {\^o}ng c\IeC {\^o}ng vi\IeC {\d \ecircumflex }c}{14}{section.6}
+\contentsline {section}{\numberline {2}C\IeC {\ohorn } s\IeC {\h \ohorn } l\IeC {\'y} thuy\IeC {\'\ecircumflex }t}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Gi\IeC {\h a}i thu\IeC {\d \acircumflex }t DES}{2}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}T\IeC {\d a}o 16 subkeys v\IeC {\'\ohorn }i \IeC {\dj }\IeC {\d \ocircumflex } d\IeC {\`a}i 48 bits}{2}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}M\IeC {\~a} h\IeC {\'o}a t\IeC {\`\uhorn }ng kh\IeC {\'\ocircumflex }i 64 bits d\IeC {\~\uhorn } li\IeC {\d \ecircumflex }u}{3}{subsubsection.2.1.2}
+\contentsline {subsection}{\numberline {2.2}Gi\IeC {\h a}i thu\IeC {\d \acircumflex }t RSA}{7}{subsection.2.2}
+\contentsline {section}{\numberline {3}C\IeC {\'\acircumflex }u tr\IeC {\'u}c c\IeC {\h u}a \IeC {\'\uhorn }ng d\IeC {\d u}ng}{7}{section.3}
+\contentsline {subsection}{\numberline {3.1}Symmetric}{9}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Asymmetric}{9}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Addition}{10}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}MD5}{10}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Main}{10}{subsection.3.5}
+\contentsline {section}{\numberline {4}Ch\IeC {\d a}y th\IeC {\h \uhorn } ch\IeC {\uhorn }\IeC {\ohorn }ng tr\IeC {\`\i }nh}{11}{section.4}
+\contentsline {subsection}{\numberline {4.1}M\IeC {\~a} h\IeC {\'o}a DES}{11}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Gi\IeC {\h a}i m\IeC {\~a} DES}{11}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}T\IeC {\d a}o kh\IeC {\'o}a RSA}{12}{subsection.4.3}
+\contentsline {subsection}{\numberline {4.4}M\IeC {\~a} h\IeC {\'o}a RSA}{14}{subsection.4.4}
+\contentsline {subsection}{\numberline {4.5}Gi\IeC {\h a}i m\IeC {\~a} RSA}{14}{subsection.4.5}
+\contentsline {subsection}{\numberline {4.6}K\IeC {\~y} thu\IeC {\d \acircumflex }t gi\IeC {\'\acircumflex }u tin}{15}{subsection.4.6}
+\contentsline {section}{\numberline {5}H\IeC {\uhorn }\IeC {\'\ohorn }ng d\IeC {\~\acircumflex }n v\IeC {\d \acircumflex }n h\IeC {\`a}nh tr\IeC {\^e}n MSVC}{17}{section.5}
+\contentsline {section}{\numberline {6}Ph\IeC {\^a}n t\IeC {\'\i }ch v\IeC {\`a} k\IeC {\'\ecircumflex }t lu\IeC {\d \acircumflex }n}{17}{section.6}
+\contentsline {section}{\numberline {7}Ph\IeC {\^a}n c\IeC {\^o}ng c\IeC {\^o}ng vi\IeC {\d \ecircumflex }c}{20}{section.7}

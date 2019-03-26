@@ -150,7 +150,107 @@ Với RSA, nhóm đọc dữ liệu cần mã hóa (plaint text) từ tệp văn
 Với Steganography, nhóm đọc dữ liệu từ text file trộn vào một ảnh mang.\\
 Với DES, nhóm có thể mã hóa các tệp cơ bản như text, mp4, pdf, png,... bằng key có sẵn từ tệp.
 Để chứng minh plaint text trùng với dữ liệu được giải mã, nhóm sử dụng hàm băm để đối chiếu hai tệp.
-
+\section{Cơ sở lý thuyết}
+\subsection{Giải thuật DES}
+DES, viết tắt của \textbf{Data Encryption Standard}, là một block cipher, nghĩa là nó xử lí từng khối plaintext đầu vào với một kích thước nhất định (như 64 bits,... ) và trả về các khối đã được mã hóa tương ứng với cùng kích thước. Do đó, kết quả DES là một hoán vị của 64 bits đầu vào. DES là một thuật mã hóa đối xứng, sử dụng cùng một key cho cả quá trình mã hóa và giải mã. Cụ thể với việc mã hóa DES ECB 64 bits, có thể chia làm hai bước chính sau:
+\subsubsection{Tạo 16 subkeys với độ dài 48 bits}
+Key 64 bits sẽ được hoán vị thông qua bảng PC-1. Ta có thể hiểu bit thứ 57 của key trở thành bit thứ nhất, bit thứ 49 của key trở thành bit thứ hai,... sau khi được hoán vị bởi bảng PC-1.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.7]{PC1.png}
+    \caption{Bảng PC1.}
+    \label{fig:PC1}
+\end{figure}
+Từ key 64 bits ban đầu, ta có key hoán vị 56 bits K+. Chia K+ thành hai phần 28 bits, $C_0$ là nửa trái và $D_0$ là nửa phải. Ta tạo ra 16 cặp khối $C_n$ và $D_n$, $1 \leq n \leq 16$. Mỗi cặp $C_n$ và $D_n$ được tính từ cặp $C_{n-1}$ và $D_{n-1}$ với việc "dịch trái" từng bit trong mỗi khối, các bit di chuyển qua trái, trừ bit đầu được đưa về cuối khối.
+\begin{figure}[htp]
+    \centering
+    \includegraphics{shift.png}
+    \caption{Bảng dịch bit ở từng vòng lặp.}
+    \label{fig:shift}
+\end{figure}
+Nhìn hình trên, ta có thể hiểu $C_3$ và $D_3$ được nhận từ $C_2$ và $D_2$ thông qua dịch trái 2 bits, hay $C_{16}$ và $D_{16}$ được nhận từ $C_{16}$ và $D_{16}$ thông qua dịch trái 1 bit. Bây giờ chúng ta có 16 cặp $C_nD_n$, thông qua bảng PC-2 ta sẽ tạo ra 16 subkeys với độ dài mỗi key là 48 bits.
+\begin{figure}[htp]
+    \centering
+    \includegraphics{PC2.png}
+    \caption{Bảng PC2.}
+    \label{fig:PC2}
+\end{figure}
+Tương tự như PC-1, ta có thể hiểu như sau: bit đầu tiên của $K_n$ là bit thứ 14 của $C_nD_n$, bit thứ hai của $K_n$ là bit thứ 17 của $C_nD_n$,...
+\subsubsection{Mã hóa từng khối 64 bits dữ liệu}
+Ta dùng bảng IP để hoán vị 64 bits dữ liệu đầu vào M. Như hình dưới, bit thứ 58 của M trở thành bit thứ nhất của IP, bit thứ 50 của M trở thành bit thứ hai của IP,...
+\begin{figure}[htp]
+    \centering
+    \includegraphics{IP.png}
+    \caption{Bảng IP}
+    \label{fig:IP}
+\end{figure}
+Kế tiếp, ta chia IP thành hai nửa: nửa trái $L_0$ 32 bits, và nửa phải $R_0$ cũng với độ dài 32 bits. Chúng ta sẽ trải qua 16 vòng lặp để xác định giá trị $L_{16}$ và $R_{16}$ theo công thức truy hồi: \[L_n = R_{n-1}\]\[R_n = L_{n-1} \oplus F(R_{n-1},K_n)\]
+Để tính hàm F, trước tiên ta sẽ mở rộng $R_{n-1}$ từ 32 bits thành 48 bits. Bằng việc sử dụng lặp lại vài bits trong $R_{n-1}$, ta có bảng thể hiện hàm E biến 32 bits đầu vào thành 48 bits đầu ra như sau:
+\begin{figure}[htp]
+    \centering
+    \includegraphics{E.png}
+    \caption{Bảng E.}
+    \label{fig:E}
+\end{figure}
+Tiếp theo, ta thực hiện phép XOR từng bit $E(R_{n-1})$ với key $K_n$. Bởi vì ban đầu ta đã mở rộng 32 bits thành 48 bits nên bây giờ cần thu gọn lại. Kết quả phép toán XOR trên là 48 bits, hiểu cách khác chính là 8 nhóm 6 bits. \[K_n \oplus E(R_{n-1}) = B_1B_2B_3B_4B_5B_6B_7B_8\] Ta dùng 8 bảng S lần lượt cho từng nhóm đó, biến 6 bits đầu vào thành 4 bits đầu ra. Như vậy, hiển nhiên ta đã chuyển được kết quả 48 bits từ phép tính XOR về 32 bits. Cụ thể, chẳng hạn giá trị $S_1(B)$ được tính như sau: Bit đầu và bit cuối của B được ghép lại thành một số thập thân \textbf{i} trong đoạn [0;3]. Bốn bits chính giữa còn lại của B là một số thập phân \textbf{j} trong đoạn [0;15]. Ta tìm giá trị hàng thứ \textbf{i}, cột thứ \textbf{j} trong bảng $S_1$ thì đó chính là giá trị của $S_1(B)$.
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=1.1]{S.png}
+    \caption{8 bảng S}
+    \label{fig:S}
+\end{figure}
+\\Bước cuối cùng của hàm  F là hoán vị 32 bits bằng bảng P. $F=P(S_1(B_1)S_2(B_2)...S_8(B_8))$
+\begin{figure}[htp]
+    \centering
+    \includegraphics{P.png}
+    \caption{Bảng P.}
+    \label{fig:P}
+\end{figure}
+\\Có giá trị hàm F, ta thực hiện phép XOR với $L_{n-1}$ ta được giá trị $R_n$. Và sau 16 vòng lặp ta được giá trị $L_{16}$ và $R_{16}$. Ta đảo ngược thứ tự của chúng trong khối 64 bits, trở thành $R_{16}L_{16}$ và hoán vị lần cuối với bảng $IP^{-1}$:
+\\
+\begin{figure}[htp]
+    \centering
+    \includegraphics{IPreverse.png}
+    \caption{Bảng ngược của IP.}
+    \label{fig:IPreverse}
+\end{figure}
+\begin{figure}[htp]
+    \centering
+    \includegraphics[scale=0.8]{DES.png}
+    \caption{Sơ đồ khối của DES}
+    \label{fig:DES}
+\end{figure}
+\\
+\subsection{Giải thuật RSA}
+RSA, viết tắt tên của 3 tác giả \textbf{Rivest–Shamir–Adleman}, là một thuật mã hóa bất đối xứng. RSA sử dụng một biểu thức với số mũ. Plaintext được mã hóa theo khối, với mỗi khối có giá trị nhị phân nhỏ hơn một số n. Nghĩa là, kích thước khối phải nhỏ hơn hoặc bằng $log_2(n)+ 1$. Thực tế, kích thước khối là i bits, trong đó $2^i<n\leq2^{i+i}$. Mã hóa và giải mã có dạng sau, với M là plaintext còn C là ciphertext.
+\begin{center}
+    $C = M^e$ mod n
+    \\$M = C^d$ mod n = $(M^e)^d$ mod n = $M^{ed}$ mod n
+\end{center}{}
+Cả người gửi và người nhận đều phải biết giá trị của n. Người gửi biết giá trị của e và chỉ người nhận biết giá trị của d. Do đó, đây là thuật toán mã hóa công khai với khóa chung là PU = {e,n} và khóa riêng là PR = {d,n}. Để thuật toán này đạt yêu cầu cho mã hóa khóa công khai, các yêu cầu sau phải được đáp ứng:
+\begin{itemize}
+    \item Có thể tìm các giá trị của e, d và n sao cho $M^{ed}$ mod n = M cho tất cả M < n.
+    \item Việc tính toán $M^e$ mod n và $C^d$ mod n tương đối dễ dàng cho tất cả các giá trị của M < n.
+    \item Không thể xác định d dù biết e và n.
+\end{itemize}
+Việc thực hiện RSA được mô tả qua các bước sau:
+\begin{itemize}
+    \item \textbf{Người nhận sinh key:}
+    \\Chọn hai số p, q nguyên tố cùng nhau.
+    \\Tính giá trị n = pq.
+    \\Tính giá trị $\phi(n) = (p-1)(q-1)$.
+    \\Chọn số nguyên e < $\phi(n)$ sao cho chúng nguyên tố cùng nhau.
+    \\Tìm d thỏa $d \equiv e^{-1}$ (mod $\phi(n)$).
+    \\Khóa công khai: PU = {e,n}
+    \\Khóa riêng tư:  PR = {d,n}
+    \item \textbf{Người gửi mã hóa:}
+    Sử dụng khóa công khai của người nhận để mã hóa plaintext M < n.
+    Ciphertext: C = $M^e$ mod n
+    \item \textbf{Người nhận giải mã:}
+    Người nhận dùng khóa riêng tư của mình để giải mã ciphertext C.
+    Plaintext: M = $C^d$ mod n
+\end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Cấu trúc của ứng dụng}
 %TODO: mỗi thiết bị như gateway, mobile phải có kiến trúc tổ chức trong này

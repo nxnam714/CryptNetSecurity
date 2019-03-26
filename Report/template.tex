@@ -103,13 +103,13 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 
 \begin{center}
 \begin{tabular}{c}
-\multicolumn{1}{l}{\textbf{{\Large Mật mã và an ninh mạng}}}\\
+\multicolumn{1}{l}{\textbf{{\Large MẬT MÃ VÀ ANH NINH MẠNG}}}\\
 ~~\\
 \hline
 \\
 \multicolumn{1}{l}{\textbf{{\Large Đề tài}}}\\
 \\
-\textbf{{\Huge Ứng ụng mã hóa dữ liệu}}\\
+\textbf{{\Huge Ứng dụng mã hóa dữ liệu}}\\
 \\
 \hline
 \end{tabular}
@@ -119,7 +119,7 @@ KHOA KHOA HỌC - KỸ THUẬT MÁY TÍNH
 
 \begin{table}[h]
 \begin{tabular}{rrl}
-\hspace{5 cm} & GVHD: & Nguyễn Trần Hữu Nguyên\\
+\hspace{5 cm} & GVHD: & Nguyễn Hữu Hiếu\\
 & SV: & Nguyễn Trần Lê Minh - 1511003 \\
 & & Lê Duy Thanh - 1512990 \\
 & & Nguyễn Xuân Nam - 1512098\\
@@ -146,7 +146,9 @@ Trong bài tập lớn này, nhóm sẽ thực hiện một số giải thuật 
 \section{Giới thiệu đề tài}
 Nhóm đã hiện thực ba giải thuật mã hóa phổ biến đó là RSA, DES và Steganography.\\
 
-Với RSA và DES, nhóm đọc dữ liệu cần mã hóa (plaint text) từ tệp văn bản (*.txt file - text file). Đối với Steganography, nhóm đọc dữ liệu từ text file trộn vào một ảnh mang.
+Với RSA, nhóm đọc dữ liệu cần mã hóa (plaint text) từ tệp văn bản (*.txt file - text file).\\
+Với Steganography, nhóm đọc dữ liệu từ text file trộn vào một ảnh mang.\\
+Với DES, nhóm có thể mã hóa các tệp cơ bản như text, mp4, pdf, png,... bằng key có sẵn từ tệp.
 Để chứng minh plaint text trùng với dữ liệu được giải mã, nhóm sử dụng hàm băm để đối chiếu hai tệp.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,15 +158,16 @@ Cấu trúc của ứng dụng được miêu tả trong hình \ref{fig:file_str
 \begin{figure}[htp]
     \centering
     \includegraphics[scale=1]{file_structure.png}
-    \caption{Kiến trúc chính của hệ thống}
+    \caption{Các mô đun của chương trình}
     \label{fig:file_structure}
 \end{figure}
-Chương trình gồm 4 mô đun chính là:
+Chương trình gồm 5 mô đun chính là:
 \begin{itemize}
     \item Symmetric: Chứa các hàm mã hóa đối xứng tập tin sử dụng giải thuật DES.
     \item Asymmetric: Chứa các hàm mã hóa bất đối xứng tập tin sử dụng giải thuật RSA.
     \item Addition: Chứa các hàm mã hóa tập tin sử dụng kỹ thuật giấu tin (Steganography).
-    \item Main: Đọc các đối số và gọi các hàm phù hợp trong ba thư viện trên.
+    \item MD5: Hàm MD5 sử dụng cho việc so sánh hai tệp.
+    \item Main: Đọc các đối số và gọi các hàm phù hợp trong bốn thư viện trên.
 \end{itemize}
 	\subsection{Symmetric}
 	Giải thuật mã hóa đối xứng nhóm sử dụng là DES với ECB mode. Trong tệp "Symmetric.h":\\
@@ -224,208 +227,248 @@ void steganography_decode(Mat image, char*outputfile);
 	\end{lstlisting}
 	Từ ảnh image, rút ra thông điệp và lưu nó vào outputfile.
 
+	\subsection{MD5}
+	Trong tệp "MD5Checksum.h":\\
+	\begin{lstlisting}[language=C]
+unsigned char *getMd5Hash(unsigned char *data, size_t dataLen, int *mdLen);
+	\end{lstlisting}
+	Trả về giá trị Md5Hash của data với độ dài dataLen và độ dài của Md5 được lưu trong mdLen.\\
+	Lưu ý: Cần giải phóng vùng nhớ của con trỏ trả về.
+
+	\subsection{Main}
+	Hàm main chịu trách nhiệm đọc khác đối số khi chạy chương trình. Từ đó quyết định thực hiện giải thuật mã hóa nào. Nhóm có một số định nghĩa cho đối số đầu tiên như sau:\\
+	\begin{lstlisting}[language=C]
+#define SYMMETRIC_ENCODE	10
+#define SYMMETRIC_DECODE	11
+#define RSA_CREATE			20
+#define RSA_ENCODE			21
+#define RSA_DECODE			22
+#define STREGAN_ENCODE		30
+#define STREGAN_DECODE		31
+#define MD5_CHECKSUM		40
+	\end{lstlisting}
+	Từ đây, với mỗi tùy chọn của đối số đầu tiên mà người dùng có thể lựa chọn tạo key, giải mã, mã hóa hay so sánh hai tệp.\\
+
+	Ngoài ra, trong hàm main, nhóm có gọi hàm clock() trước và sau khi thực hiện chương trình để đo thời gian mã hóa và giải mã.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Các giao thức sử dụng}
-% TODO:
-% mobile-web : giao thuc http
-% gateway : stop and wait protocol
-	\subsection{Hypertext Transfer Protocol}
-    Hypertext Transfer Protocol(HTTP)\cite{HTTP} là một giao thức dùng trong việc truyền các dữ liệu trên các web. Là một phương thức sử dụng mô hình client-server. Server sẽ lắng nghe ở cổng 80 và trả lời các yêu cầu từ client. Dữ liệu trả về từ server bao gồm các mã trạng thái (status code) để  cho biết tình trạng truy cập của người dùng. Các mã trạng thái thường gặp như 200 -thành công, 301- chuyển trang, 404- trang không tìm thấy....\\
-    
-    HTTP cung cấp nhiều phương thức cho người sử dụng nhưng có 2 phương thức được sử dụng chính trong bài tập lớn của nhóm:
+\section{Chạy thử chương trình}
+	\subsection{Mã hóa DES}
+    Chạy chương trình với command:\\
+    \$File.exe 10 inputfile inputkeyfile outputfile\\
+    Trong đó:
     \begin{itemize}
-        \item POST: đây là phương thức dùng để  gửi dữ liệu từ gateway lên server. POST cho phép gửi kèm dữ liệu từ client tới server trong gói tin.
-        \item GET: đây là phương thức dùng để lấy dữ liệu từ server mà trong bài tập lớn này là dữ liệu JSON từ server.
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item 10 : để lựa chọn thực thi mã hóa DES.
+        \item inputfile: đường dẫn đến tệp cần mã hóa.
+        \item inputkeyfile: đường dẫn đến tệp chứa key mã hóa.
+        \item outputfile: đường dẫn đến tệp kết quả. 
     \end{itemize}
+    
+    Ví dụ hình \ref{fig:desen}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{desen.png}
+        \caption{Mã hóa DES}
+        \label{fig:desen}
+    \end{figure}
 	
-	
-	\subsection{Stop and Wait}
-	...
+	Từ hình \ref{fig:desen}, ta thấy mất 11ms để mã hóa tệp Lab01.pdf và tệp mã hóa (des\_encrypted.txt) được tạo.
+	\subsection{Giải mã DES}
+    Chạy chương trình với command:\\
+    \$File.exe 11 inputkeyfile inputfile outputfile\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item 11 : để lựa chọn thực thi giải mã DES.
+        \item inputfile: đường dẫn đến tệp cần giải mã.
+        \item inputkeyfile: đường dẫn đến tệp chứa key mã hóa.
+        \item outputfile: đường dẫn đến tệp kết quả. 
+    \end{itemize}
+
+    Ví dụ hình \ref{fig:desde}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{desde.png}
+        \caption{Giải mã DES}
+        \label{fig:desde}
+    \end{figure}
+    Từ hình \ref{fig:desde}, ta thấy tệp des\_encrypted.txt được giải mã trong vòng 14ms và tạo ra tệp giải mã decrypted\_file.pdf.
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{descmp.png}
+        \caption{Kết quả của giải thuật DES}
+        \label{fig:descmp}
+    \end{figure}
+    Kết quả của giải thuật DES đã tạo ra tệp giải mã và được miêu tả ngắn gọn trong hình \ref{fig:descmp}.
+
+    \subsection{Tạo khóa RSA}
+    Chạy chương trình với command:\\
+    \$File.exe 20  privateouput publicoutput\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item 20 : để lựa chọn thực thi tạo khóa bí mật và công khai.
+        \item privateouput: đường dẫn đến tệp chứa khóa bí mật.
+        \item publicoutput: đường dẫn đến tệp chứa khóa công khai.
+        \item outputfile: đường dẫn đến tệp kết quả. 
+    \end{itemize}
+    Ví dụ hình \ref{fig:rsacreate}. Mất 418ms để tạo ra cặp khóa bí mật và công khai. Hai khóa trên ghi vào hai tệp: private\_key.pem và  public\_key.pem.
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{rsacreate.png}
+        \caption{Tạo cặp khóa công khai và bí mật}
+        \label{fig:rsacreate}
+    \end{figure}
+    \subsection{Mã hóa RSA}
+    Chạy chương trình với command:\\
+    \$File.exe 21 inputfile  privateouput publicoutput outputfile\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item 21 : để lựa chọn thực thi tạo khóa bí mật và công khai.
+        \item inputfile: đường dẫn đến tệp cần mã hóa.
+        \item privateouput: đường dẫn đến tệp chứa khóa bí mật.
+        \item publicoutput: đường dẫn đến tệp chứa khóa công khai.
+    \end{itemize}
+    Ví dụ hình \ref{fig:rsaen}. Mất 183ms để mã hóa tệp text.txt. Kết quả mã hóa được ghi xuống tệp encrypted\_file.bin
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{rsaen.png}
+        \caption{Tạo cặp khóa công khai và bí mật}
+        \label{fig:rsaen}
+    \end{figure}
+    \subsection{Giải mã RSA}
+    Chạy chương trình với command:\\
+    \$File.exe 22 privateinput inputfile outputfile\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item 22 : để lựa chọn thực thi mã hóa tệp theo giải thuật RSA.
+        \item privateinput: đường dẫn đến tệp chứa khóa bí mật.
+        \item inputfile: đường dẫn đến tệp cần giải mã.
+        \item outputfile: đường dẫn đến tệp kết quả của phép giải mã.
+    \end{itemize}
+    Ví dụ hình \ref{fig:rsade}. Mất 155ms để giải mã tệp encrypted\_file.bin. Kết quả mã hóa được ghi xuống tệp decrypted\_file.txt.\\
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{rsade.png}
+        \caption{Tạo cặp khóa công khai và bí mật}
+        \label{fig:rsade}
+    \end{figure}
+    Hình \ref{fig:rsacmp} thể hiện trực quan so sánh giữa tệp ban đầu và tệp sau mã hóa.
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{rsacmp.png}
+        \caption{Tạo cặp khóa công khai và bí mật}
+        \label{fig:rsacmp}
+    \end{figure}
+    \subsection{Kỹ thuật giấu tin}
+    Chạy chương trình với command sau để gắn thông điệp vào ảnh mang:\\
+    \$File.exe 30 inputfile1 inputfile2 outputfile\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item inputfile1: đường dẫn đến tệp chứa thông điệp.
+        \item inputfile2: đường dẫn đến tệp chứa ảnh mang.
+        \item outputfile: đường dẫn đến tệp kết quả của phép giấu tin.
+    \end{itemize}
+    Ví dụ hình \ref{fig:steen}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{steen.png}
+        \caption{Gắn thông điệp vào ảnh mang}
+        \label{fig:steen}
+    \end{figure}
+
+    Chạy chương trình với command sau để gắn thông điệp vào ảnh mang:\\
+    \$File.exe 30 inputfile outputfile\\
+    Trong đó:
+    \begin{itemize}
+        \item File.exe : tệp thực thi được tạo từ MSVC.
+        \item inputfile: đường dẫn đến tệp chứa ảnh mang thông điệp.
+        \item outputfile: đường dẫn đến tệp giải mã.
+    \end{itemize}
+    Ví dụ hình \ref{fig:stede}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{stede.png}
+        \caption{Lấy thông điệp từ ảnh mang}
+        \label{fig:stede}
+    \end{figure}
+
+    Kết quả của quá trình giải mã và mã hóa được thể hiện qua hình \ref{fig:stecmp}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{stecmp.png}
+        \caption{So sánh input và output của kỹ thuật giấu tin}
+        \label{fig:stecmp}
+    \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Các tính năng của hệ thống}
-Hệ thống đáp ứng được các yêu cầu cơ bản của một hệ thống theo dõi độ ẩm đất bao gồm:
+\section{Hướng dẫn vận hành trên MSVC}
+	Bước 1: Cài đặt MSVC.\\
+    Bước 2: Cài đặt opencv.\\
+    Bước 3: Cài đặt opensll.\\
+    Bước 4: Tạo project trên MSVC.\\
+    Bước 5: Thiết lập đường dẫn đến thư viện opencv và openssl như hình \ref{fig:msvcinclude} \ref{fig:msvclib} và \ref{fig:msvcinput}\\
+    Bước 6: Tải mã nguồn tại url{https://github.com/nxnam714/CryptNetSecurity.git} và gom vào project.
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{msvcinclude.png}
+        \caption{Lấy thông điệp từ ảnh mang}
+        \label{fig:msvcinclude}
+    \end{figure}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{msvclib.png}
+        \caption{Lấy thông điệp từ ảnh mang}
+        \label{fig:msvclib}
+    \end{figure}
+    \begin{figure}[htp]
+        \centering
+        \includegraphics[scale=0.4]{msvcinput.png}
+        \caption{Lấy thông điệp từ ảnh mang}
+        \label{fig:msvcinput}
+    \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Phân tích và kết luận}
+Ứng dụng có thể chạy tốt ba giải thuật mã hóa.
 \begin{itemize}
-    \item Thu thập dữ liệu về độ ẩm đất từ các cảm biến.
-    \item Vẽ biểu đồ cho thấy sự biến động về độ ẩm trong ngày.
-    \item Có khả năng kiểm tra các thông báo về nhiệt độ và lượng mưa của khu vực bằng các opensource API\cite{weatherAPI}.
-    \item Hệ thống có sự quản lí phân cấp và có khả năng mở rộng.
+    \item Kết quả giải mã là đồng nhất với dữ liệu đưa vào dựa vào hàm kiểm tra MD5.
+    \item Có thể mã hóa các tệp cơ bản như pdf, png, txt,...
+    \item Thời gian thực thi nhanh.
+\end{itemize}
+Tuy nhiên còn một số khuyết điểm:
+\begin{itemize}
+    \item Tính thực tế của ứng dụng chưa cao, chỉ có thể sử dụng cho việc mã hóa các tệp trong máy. Đồng thời việc bảo khóa bí mật chưa được quan tâm đến.
+    \item Ứng dụng không có giao diện nên tạo khó khăn cho việc sử dụng.
+    \item Không có thanh trạng thái báo cho người dùng biết quá trình mã hóa đang diễn ra.
+\end{itemize}
+Hướng phát triển ứng dụng:
+\begin{itemize}
+    \item Khắc phục các nhược điểm được nêu ra.
+    \item Kết hợp các giải thuật mã hóa đã hiện thực để tao ứng dụng nhắn tin an toàn.
 \end{itemize}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Hướng dẫn vận hành}
-% TODO:
-% mobile : hướng dẫn sử dụng và các thành phần trên giao diện
-% gateway : hướng dẫn setup gateway và gửi dữ liệu tới server
-% server: Setup server và sử dụng website
-	\subsection{Cách cài đặt server}
-	
-    Để có thể cài đặt và sử dụng localhost, chúng ta cần cài đặt một phần mềm có khả năng lắng nghe cổng 80 của máy tính. Ở đây nhóm sử dụng phần mềm xampp là một phần mềm miễn phí bao gồm :
-    \begin{itemize}
-        \item Apache: cho phép lắng nghe cổng 80 để tiếp nhận các yêu cầu.
-        \item Mysql: đây là cơ sở dữ liệu có cấu trúc miễn phí.
-        \item PHP: là một ngôn ngữ rất phổ biến được sử dụng ở server.
-    \end{itemize}
-    
-    Phần mềm có thể tải về tại đường dẫn: \url{https://www.apachefriends.org/index.html}.\\
-    
-    Sau khi cài đặt xampp, chúng ta có thể sử dụng mạng wifi hoặc tự phát wifi. \\
-    
-    Kế tiếp, để có thể gửi dữ liệu từ client lên server ta cần sửa lại địa chỉ của server (mặc định là 127.0.0.1) thành địa chỉ trong mạng LAN bằng cách sửa file \textit{httpd.conf} tại đường dẫn \textit{etc/httpd.conf}\\
-    
-    \lstinline{51 Listen <your local ip address>}\\
-    
-    Tải toàn bộ mã nguồn tại: \url{https://github.com/lochoang75/IoT_Lab}\\
-    
-    Khởi chạy xampp và vào đường dẫn \url{http://localhost/phpmyadmin} để 
-    nhập cơ sở dữ liệu.
-    
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[scale=0.3]{phpmyadmin.png}
-        \caption{Giao diện phpmyadmin}
-        \label{fig:my_label}
-    \end{figure}
-    Tạo một bảng có tên test và chọn vào \textbf{nhập(import)}, chọn file \textit{test.sql} để chèn cơ sở dữ liệu bao gồm 2 bảng như hình bên dưới.
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[scale=0.3]{database.png}
-        \caption{Kết quả sau khi nhập thành công database}
-        \label{fig:my_label}
-    \end{figure}
-    
-    Cuối cùng chuyển thư mục backend và frontend vào thư mục htdocs(thư mục root mặc định của localhost). Nếu thành công các đường dẫn cho các file ở server sẽ là:
-    \begin{itemize}
-        \item about.html: \url{http://localhost/frontend/about.html}
-        \item main.html: \url{http://localhost/frontend/main.html}
-        \item register.html: \url{http://localhost/frontend/register.html}
-        \item login.html:
-        \url{http://localhost/frontend/login.html}
-        \item json.php: \url{http://localhost/backend/json.php}
-        \item data.php: \url{http://localhost/backend/data.php}
-        \item login.php: \url{http://localhost/backend/login.php}
-    \end{itemize}
-    \subsection{Sử dụng các tính năng của website}
-    Sau khi cài đặt xong server, trang chính sẽ như hình sau:
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[scale=0.3]{mainpage.png}
-        \caption{Giao diện trang chính}
-        \label{fig:my_label}
-    \end{figure}
-    
-    Để hiển thị được biểu đồ, người dùng cần chọn gateway cần hiển thị. Các cảm biến có dữ liệu sẽ cho phép chọn:
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[scale=0.3]{gatewaySelect.png}
-        \caption{Giao diện sau khi chọn gateway}
-        \label{fig:my_label}
-    \end{figure}
-    Cuối cùng chọn một hoặc một vài cảm biến và đồ thị của cảm biến đó sẽ được vẽ ra.
-    \begin{figure}[htp]
-        \centering
-        \includegraphics[scale=0.3]{sensorSelect.png}
-        \caption{Giao diện sau khi chọn gateway}
-        \label{fig:my_label}
-    \end{figure}
-    Phần dưới của website là các thông tin dự báo về nhiệt độ và độ ẩm theo từng thời điểm trong ngày và được cập nhật mỗi giờ.
-    
+\section{Phân công công việc}
+Khối lượng công việc được chia đều cho các thành viên trong nhóm như sau:
+\begin{itemize}
+    \item Nguyễn Trần Lê Minh: Hiện thực khối DES.
+    \item Lê Duy Thanh: Hiện thực khối RSA.
+    \item Nguyễn Xuân Nam: Hiện thực khối MD5 và Steganography.
+\end{itemize}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	\subsection{Sử dụng ứng di động}
-	\subsubsection{Android}
-	Bước đầu tiên để sử dụng ứng dụng là cài đặt. Sử dụng android studio chạy mã nguồn từ địa chỉ \url{https://github.com/lochoang75/IoT_Lab/tree/master/assignment/iotapp}.\\
-	Sau khi cài đặt, mở ứng dụng ta thấy màn hình đăng nhập như hình \ref{fig:LoginActivityApp}\\
-	\begin{enumerate}
-	\item \textbf{Màn hình đăng nhập}\\
-	\begin{figure}[htp]
-       		\centering
-       		\includegraphics[scale=0.5]{LoginActivity.png}
-        		\caption{Giao diện sau khi chọn gateway}
-       		 \label{fig:LoginActivityApp}
-    	\end{figure}\\
-	Chọn đăng nhập chúng ta chuyển đến màn hình chính của ứng dụng như hình \ref{fig:DefaultHomeApp}.\\
-	
-	\item \textbf{Màn hình chính}\\
-	\begin{figure}[!tbp]
-\centering
-  \begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{DefaultHome.png}
-    \caption{Khởi tạo}
-    \label{fig:DefaultHomeApp}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{SelectgatewayID.png}
-    \caption{Chọn gatewayID}
-    \label{fig:SelectgatewayIDApp}
-  \end{subfigure}
-  \begin{subfigure}[b]{0.3\textwidth}
-    \includegraphics[width=\textwidth]{SelectnodeID.png}
-    \caption{Chọn nodeID}
-    \label{fig:SelectnodeIDApp}
-  \end{subfigure}
-  \caption{Màn hình chính}
- \end{figure}\\
-	Tại một thời điểm chỉ có thông tin của một cảm biến được hiển thị, vì thế chúng ta cần chọn định danh cho nó (bao gồm gatewayID 	và nodeId). Chạm vào "Touch me" để chọn các thông tin tương ứng. Lưu ý: NodeId chỉ được chọn khi gatewayId hợp lệ (đã được 	chọn).\\
-	Sau khi chọn xong định danh, trên màn hình sẽ hiển thị một danh sách thông tin thu thập được từ cảm biến như hình \ref{fig:listviewHomeApp}. Để tải lại dữ liệu, người dùng có thể lướt màn hình từ trên xuống.\\
-
-	\begin{figure}[htp]
-		  \centering
- 		 \begin{minipage}[b]{0.3\textwidth}
-   			 \includegraphics[width=\textwidth]{listviewHome.png}
-   			 \caption{Danh sách dữ liệu}
-			\label{fig:listviewHomeApp}
-  		\end{minipage}
- 		 \hfill
- 		 \begin{minipage}[b]{0.3\textwidth}
-   			 \includegraphics[width=\textwidth]{MenuApp.png}
-   			 \caption{Menu của ứng dụng}
-			 \label{fig:MenuApp}
- 		 \end{minipage}
-	\end{figure}
-	Trên góc trên bên phải màn hình có nút menu. Chọn menu để chuyển tới các màn hình khác. Khi chọn menu, chúng ta thấy xuất 		hiện hình \ref{fig:MenuApp}\\
-	\item \textbf{Menu}\\
-	Menu bao gồm các phần sau:\\
-		\begin{itemize}
-		\item \textbf{Home} Chuyển đến màn hình chính.\\
-		\item \textbf{Line Chart} Chuyển đến màn hình biểu đồ đường (xem mục \ref{linechartsection})\\
-		\item \textbf{Distribution Chart} Chuyển đến màn hình biểu đồ phân b.(xem mục \ref{distributionchartsection})\\
-		\item \textbf{Logout} Chuyển đến màn hình đăng nhập.
-		\end{itemize}	
-	\item \textbf{Màn hình biểu đồ đường} \label{linechartsection}\\
-	\begin{figure}[htp]
-       		\centering
-       		\includegraphics[scale=0.7]{linechart.png}
-        		\caption{Biểu đồ đường}
-       		 \label{fig:linechartApp}
-    	\end{figure}\\
-	Dữ liệu từ màn hình chính sẽ được vễ thành biểu đồ tại đây. Lưu ý: chỉ có thể chuyển đế màn hình này khi định danh của cảm 			cảm biến đã được chọn.\\
-	Trục X là trục thời gian từ 0 giờ đến 24 giờ.\\
-	Trục Y là trục giá trị độ ẩm từ 0 đến 100 phần trăm.
-	\item \textbf{Màn hình biểu đồ phân bố}\label{distributionchartsection}\\
-	\begin{figure}[htp]
-       		\centering
-       		\includegraphics[scale=0.7]{distributionchart.png}
-        		\caption{Biểu đồ phân bố}
-       		 \label{fig:distributionchartApp}
-    	\end{figure}\\
-	Dữ liệu từ tệp json sẽ được tính ra phần trăm đóng góp của các nhóm và được biểu thị trên biểu đồ.\\
-	Trục X là trục của các nhóm tương ứng mới giá trị độ ẩm của mỗi data nhận được.\\
-	Trục Y là giá trị phần trăm đóng góp của mỗi nhóm mà mỗi nhóm đóng góp.\\
-	\end{enumerate}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Kết luận}
-	Kết luận về các nội dung và kết quả thực hiện được.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
 \begin{thebibliography}{80}
 
 
-\bibitem{HTTP}
-HTTP Definnition, \url{https://techterms.com/definition/http}
+\bibitem{openssl}
+Thư viện openssl, \url{https://www.openssl.org/docs/man1.0.2/}
 
 
-\bibitem{weatherAPI}
-\url{https://openweathermap.org/api}
+\bibitem{book}
+Sách giáo khoa môn học: Stallings, William - Cryptography and network security principles and practice (2017, Pearson).
 
 
 \end{thebibliography}

@@ -51,9 +51,9 @@ int private_decrypt(int flen, unsigned char* from, unsigned char* to, RSA* key, 
 	return result;
 }
 
-void create_encrypted_file(char* encrypted, RSA* key_pair) {
+void create_encrypted_file(char* encrypted, RSA* key_pair, char *outputfile) {
 
-	FILE* encrypted_file = fopen("../output_files/encrypted_file.bin", "w");
+	FILE* encrypted_file = fopen(outputfile, "wb");
 	fwrite(encrypted, sizeof(*encrypted), RSA_size(key_pair), encrypted_file);
 	fclose(encrypted_file);
 }

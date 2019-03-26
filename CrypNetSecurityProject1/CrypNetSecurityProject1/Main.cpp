@@ -20,6 +20,7 @@
 #define STREGAN_ENCODE		30
 #define STREGAN_DECODE		31
 #define MD5_CHECKSUM		40
+
 #define DATA_LENGTH			2048
 
 
@@ -76,8 +77,12 @@ int main(int argc, char *argv[])
 		char *encrypt = NULL;
 		char *decrypt = NULL;
 
-		fp = fopen(argv[2], "r");
-		fgets(message, KEY_LENGTH / 8, fp);
+		fp = fopen(argv[2], "rb");
+		//fgets(message, KEY_LENGTH / 8, fp);
+		fseek(fp, 0, SEEK_END);
+		int inlength = ftell(fp);
+		rewind(fp);
+		fread(message, sizeof(char), inlength, fp);
 		fclose(fp);
 
 		fp = fopen(argv[3], "rb");
@@ -89,14 +94,14 @@ int main(int argc, char *argv[])
 		fclose(fp);
 
 		encrypt = (char*)malloc(RSA_size(public_key));
-		int encrypt_length = public_encrypt(strlen(message) + 1, (unsigned char*)message, (unsigned char*)encrypt, public_key, RSA_PKCS1_OAEP_PADDING);
+		int encrypt_length = public_encrypt(inlength, (unsigned char*)message, (unsigned char*)encrypt, public_key, RSA_PKCS1_OAEP_PADDING);
 		if (encrypt_length == -1) 
 		{
 			LOG("An error occurred in public_encrypt() method");
 		}
 		LOG("Data has been encrypted.");
 
-		create_encrypted_file(encrypt, public_key);
+		create_encrypted_file(encrypt, public_key, argv[5]);
 		LOG("Encrypted file has been created.");
 
 		RSA_free(private_key);
@@ -130,7 +135,7 @@ int main(int argc, char *argv[])
 		}
 		LOG("Data has been decrypted.");
 
-		FILE *decrypted_file = fopen(argv[4], "w");
+		FILE *decrypted_file = fopen(argv[4], "wb");
 		fwrite(decrypt, sizeof(*decrypt), decrypt_length - 1, decrypted_file);
 		fclose(decrypted_file);
 		LOG("Decrypted file has been created.");
@@ -144,23 +149,38 @@ int main(int argc, char *argv[])
 	case MD5_CHECKSUM:
 	{
 		FILE  *fp = NULL;
-		char plainttext[DATA_LENGTH], decryptedtext[DATA_LENGTH];
+		char *plaintext = NULL, *decryptedtext = NULL;
 		unsigned char *md1, *md2;
 		int mdLen1, mdLen2 = 0;
 
-		memset(&plainttext, 0, DATA_LENGTH);
-		memset(&decryptedtext, 0, DATA_LENGTH);
+		//memset(&plainttext, 0, DATA_LENGTH);
+		//memset(&decryptedtext, 0, DATA_LENGTH);
 
-		fp = fopen(argv[2], "r");
-		fgets(plainttext, DATA_LENGTH, fp);
+		fp = fopen(argv[2], "rb");
+		//fgets(plainttext, DATA_LENGTH, fp);
+		fseek(fp, 0, SEEK_END);
+		int plainlength = ftell(fp);
+		rewind(fp);
+		plaintext = (char *)malloc((plainlength) * sizeof(char));
+		fread(plaintext, sizeof(char), plainlength, fp);
 		fclose(fp);
 
-		fp = fopen(argv[3], "r");
-		fgets(decryptedtext, DATA_LENGTH, fp);
+		fp = fopen(argv[3], "rb");
+		fseek(fp, 0, SEEK_END);
+		int decryptedlength = ftell(fp);
+		rewind(fp);
+		decryptedtext = (char *)malloc((decryptedlength) * sizeof(char));
+		fread(decryptedtext, sizeof(char), decryptedlength, fp);
+		//fgets(decryptedtext, DATA_LENGTH, fp);
 		fclose(fp);
 
-		md1 = getMd5Hash((unsigned char *)plainttext, DATA_LENGTH, &mdLen1);
-		md2 = getMd5Hash((unsigned char *)decryptedtext, DATA_LENGTH, &mdLen2);
+		if (plainlength != decryptedlength)
+		{
+			cout << "FALSE\n";
+			break;
+		}
+		md1 = getMd5Hash((unsigned char *)plaintext, plainlength, &mdLen1);
+		md2 = getMd5Hash((unsigned char *)decryptedtext, decryptedlength, &mdLen2);
 
 		//cout << memcmp(plainttext, decryptedtext, DATA_LENGTH) << endl;
 
@@ -257,6 +277,6 @@ int main(int argc, char *argv[])
 	total_t = (end_t - start_t);
 	printf("Total time taken by CPU: %d\n", total_t);
 
-	system("pause");
+	//system("pause");
 	return 0;
 }

@@ -34,6 +34,6 @@ int private_decrypt(int flen, unsigned char* from, unsigned char *to, RSA* key, 
 /*
  * @brief   create_ecrypted_file function creates .bin file. It contains encrypted data.
  */
-void create_encrypted_file(char* encrypted, RSA * key_pair);
+void create_encrypted_file(char* encrypted, RSA * key_pair, char *outputfile);
 
 #endif //RSA_ALGORITHM_H

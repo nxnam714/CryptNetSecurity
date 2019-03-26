@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>11 ../input_files/deskey.txt ../output_files/des_encrypted.txt ../output_files/des_decrypted.mp4</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>22 ../output_files/private_key.pem ../output_files/encrypted_file.bin ../output_files/decrypted_file.txt</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
 </Project>
